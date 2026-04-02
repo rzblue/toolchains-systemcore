@@ -105,9 +105,31 @@ jobs:
           key: src.tar-${{matrix.host_triple}}-${{ hashFiles('.github/actions/setup-crosstool-ng/*') }}-${{ hashFiles(matrix.defconfig) }}
       - name: Build toolchain
         run: |
+          echo "which make:"
+          which make
           ct-ng build
         env:
           CT_PREFIX: ${{github.workspace}}/out
+      - run: |
+          cd /Users/runner/work/toolchains-systemcore/toolchains-systemcore/.build/aarch64-systemcore-linux-gnu/build/build-ncurses-build-aarch64-build_apple-darwin23.6.0
+
+          # show the configure crash line context (optional)
+          sed -n '1170,1205p' config.log 2>/dev/null || true
+
+          # locate conftest artifacts
+          ls -la conftest* 2>/dev/null || true
+          find . -maxdepth 2 -name 'conftest*' -print
+
+          # inspect the script if present
+          sed -n '1,120p' conftest.sh 2>/dev/null || true
+          file conftest.sh 2>/dev/null || true
+
+          # show lines around the abort
+          grep -n "Abort trap" -n config.log
+          # then print ~50 lines around the matching line number
+          # (replace N with the line number from grep)
+          sed -n 'N-30,N+30p' config.log
+        if: failure() && matrix.host_triple == 'aarch64-apple-darwin'
       - name: Upload log on failure
         if: failure()
         uses: actions/upload-artifact@v7
