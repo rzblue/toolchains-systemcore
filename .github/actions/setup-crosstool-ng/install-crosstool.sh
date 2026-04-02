@@ -10,6 +10,7 @@ trap cleanup EXIT
 
 cd "$WORKDIR"
 curl -fsSL "$CROSSTOOL_SRC" | tar -xz --strip-components=1
+./bootstrap
 ./configure "$@"
 make
 make install
