@@ -1,5 +1,5 @@
 #!/bin/bash -e
-CROSSTOOL_SRC=https://github.com/crosstool-ng/crosstool-ng/releases/download/crosstool-ng-1.28.0/crosstool-ng-1.28.0.tar.xz
+CROSSTOOL_SRC=https://github.com/crosstool-ng/crosstool-ng/archive/185f3483e0e5028357b131fb97c4331551a70a1e.tar.gz
 
 WORKDIR=$(mktemp -d)
 cleanup() {
@@ -9,7 +9,7 @@ cleanup() {
 trap cleanup EXIT
 
 cd "$WORKDIR"
-curl -fsSL "$CROSSTOOL_SRC" | tar -xJ --strip-components=1
+curl -fsSL "$CROSSTOOL_SRC" | tar -xz --strip-components=1
 ./configure "$@"
 make
 make install
