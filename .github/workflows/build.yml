@@ -109,6 +109,7 @@ jobs:
         with:
           name: ${{ env.TOOLCHAIN_NAME }}-log
           path: ${{github.workspace}}/build.log
+          archive: false
       - name: Archive toolchain
         run: |
           tar -cvzf "${{ env.TOOLCHAIN_NAME }}.tar.gz" "${{ env.TOOLCHAIN_NAME }}/"
@@ -118,6 +119,7 @@ jobs:
         with:
           name: ${{ env.TOOLCHAIN_NAME }}
           path: ${{ github.workspace }}/out/${{ env.TOOLCHAIN_NAME }}.tar.gz
+          archive: false
       - name: Test toolchain
         run: ./test/test-toolchain.sh -a "${{github.workspace}}/out/${{ env.TOOLCHAIN_NAME }}.tar.gz" -t "${{ env.TOOLCHAIN_NAME }}" -p "${{ matrix.target_triple }}-" -l cxx -l fortran
 
