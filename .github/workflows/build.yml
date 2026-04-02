@@ -32,6 +32,10 @@ jobs:
           - target: systemcore_pi4
             defconfig: systemcore_pi4_defconfig
             target_triple: aarch64-systemcore_pi4-linux-gnu
+          - target: test-generic
+            defconfig: aarch64-unknown-linux-gnu
+            target_triple: aarch64-unknown-linux-gnu
+            runner: macos-14
 
     runs-on: ${{ matrix.runner }}
     env:
