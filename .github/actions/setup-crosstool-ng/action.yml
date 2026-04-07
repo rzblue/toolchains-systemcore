@@ -46,6 +46,7 @@ runs:
         ${{github.action_path}}/install-crosstool.sh --prefix="$HOME/.local/lib/ct-ng"
       shell: bash
     - name: Save crosstool-ng cache
+      if: ${{ steps.cache-crosstool-ng-restore.outputs.cache-hit != 'true' }}
       uses: actions/cache/save@v5
       with:
         path: ~/.local/lib/ct-ng
