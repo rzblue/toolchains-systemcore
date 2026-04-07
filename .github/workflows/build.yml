@@ -46,7 +46,7 @@ jobs:
           cd toolchains-systemcore
         if: ${{ runner.os == 'macOS' }}
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -98,7 +98,7 @@ jobs:
           echo "archiving:"
           tar -cvf src.tar src
       - name: Save sources
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: src.tar
           key: src.tar-${{matrix.host_triple}}-${{ hashFiles('.github/actions/setup-crosstool-ng/*') }}-${{ hashFiles(matrix.defconfig) }}
@@ -136,7 +136,7 @@ jobs:
       contents: write
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
 
       - name: List artifacts
         run: ls -R
