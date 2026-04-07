@@ -1,5 +1,6 @@
 #!/bin/bash -e
-CROSSTOOL_SRC=https://github.com/crosstool-ng/crosstool-ng/releases/download/crosstool-ng-1.28.0/crosstool-ng-1.28.0.tar.xz
+CROSSTOOL_NG_VERSION="${CROSSTOOL_NG_VERSION:-1.28.0}"
+CROSSTOOL_SRC="https://github.com/crosstool-ng/crosstool-ng/releases/download/crosstool-ng-${CROSSTOOL_NG_VERSION}/crosstool-ng-${CROSSTOOL_NG_VERSION}.tar.xz"
 
 WORKDIR=$(mktemp -d)
 cleanup() {

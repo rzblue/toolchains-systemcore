@@ -11,6 +11,12 @@ runs:
     - name: Echo action Path
       run: echo ${{github.action_path}}
       shell: bash
+    - name: Restore crosstool-ng cache
+      id: cache-crosstool-ng-restore
+      uses: actions/cache/restore@v5
+      with:
+        path: ~/.local/lib/ct-ng
+        key: crosstool-ng-${{ runner.os }}-${{ runner.arch }}-${{ inputs.version }}-${{ hashFiles('.github/actions/setup-crosstool-ng/install-crosstool.sh') }}
     - name: Install packages (Linux)
       run: | 
           sudo apt-get update && sudo apt-get install -y gcc g++ gperf bison flex texinfo help2man make libncurses5-dev \
@@ -25,6 +31,9 @@ runs:
       shell: bash
       if: ${{ runner.os == 'macOS' }}
     - name: Install crosstool-ng
+      if: ${{ steps.cache-crosstool-ng-restore.outputs.cache-hit != 'true' }}
+      env:
+        CROSSTOOL_NG_VERSION: ${{ inputs.version }}
       run: |
         if [[ $RUNNER_OS == "macOS" ]]; then
           PATH="$PATH:$(brew --prefix)/opt/binutils/bin"
@@ -34,6 +43,14 @@ runs:
           LDFLAGS="-L$(brew --prefix)/opt/ncurses/lib -L$(brew --prefix)/opt/gettext/lib"
           export LDFLAGS
         fi
-        ${{github.action_path}}/install-crosstool.sh --prefix="$HOME/.local/"
-        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        ${{github.action_path}}/install-crosstool.sh --prefix="$HOME/.local/lib/ct-ng"
+      shell: bash
+    - name: Save crosstool-ng cache
+      uses: actions/cache/save@v5
+      with:
+        path: ~/.local/lib/ct-ng
+        key: ${{ steps.cache-crosstool-ng-restore.outputs.cache-primary-key }}
+    - name: Add crosstool-ng to PATH
+      run: |
+        echo "$HOME/.local/lib/ct-ng/bin" >> "$GITHUB_PATH"
       shell: bash
