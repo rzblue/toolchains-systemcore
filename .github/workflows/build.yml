@@ -75,14 +75,18 @@ jobs:
           fi
           sed -i -e '/CT_LOCAL_TARBALLS_DIR/s/HOME/CT_TOP_DIR/' .config
           ./modify-config.sh CT_PREFIX_DIR '"${CT_PREFIX:-${HOME}/x-tools}/${{ env.TOOLCHAIN_NAME }}"'
+      - name: Resolve version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]] && [[ "${GITHUB_REPOSITORY}" == "rzblue/toolchains-systemcore" ]]; then
+            BUILD_VERSION="${GITHUB_REF_NAME}"
+          else
+            BUILD_VERSION="$(git describe --always)"
+          fi
+          echo "TOOLCHAIN_BUILD_VERSION=${BUILD_VERSION}" >> "$GITHUB_ENV"
+          echo "TOOLCHAIN_ARCHIVE=${TOOLCHAIN_NAME}-${BUILD_VERSION}.tar.gz" >> "$GITHUB_ENV"
       - name: Configure version
         run: |
-          ./modify-config.sh CT_TOOLCHAIN_PKGVERSION "\"$(source <(grep CT_TOOLCHAIN_PKGVERSION .config); echo $CT_TOOLCHAIN_PKGVERSION) $(git describe --always)\""
-        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-      - name: Configure version (release)
-        run: |
-          ./modify-config.sh CT_TOOLCHAIN_PKGVERSION "\"$(source <(grep CT_TOOLCHAIN_PKGVERSION .config); echo $CT_TOOLCHAIN_PKGVERSION) ${{ github.ref_name }}\""
-        if: startsWith(github.ref, 'refs/tags/v') && github.repository == 'rzblue/toolchains-systemcore'
+          ./modify-config.sh CT_TOOLCHAIN_PKGVERSION "\"$(source <(grep CT_TOOLCHAIN_PKGVERSION .config); echo "$CT_TOOLCHAIN_PKGVERSION") ${TOOLCHAIN_BUILD_VERSION}\""
       - name: Download toolchain sources
         run: |
           ct-ng source
@@ -112,16 +116,16 @@ jobs:
           archive: false
       - name: Archive toolchain
         run: |
-          tar -cvzf "${{ env.TOOLCHAIN_NAME }}.tar.gz" "${{ env.TOOLCHAIN_NAME }}/"
+          tar -cvzf "${TOOLCHAIN_ARCHIVE}" "${{ env.TOOLCHAIN_NAME }}/"
         working-directory: out/
       - name: Upload toolchain
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.TOOLCHAIN_NAME }}
-          path: ${{ github.workspace }}/out/${{ env.TOOLCHAIN_NAME }}.tar.gz
+          path: ${{ github.workspace }}/out/${{ env.TOOLCHAIN_ARCHIVE }}
           archive: false
       - name: Test toolchain
-        run: ./test/test-toolchain.sh -a "${{github.workspace}}/out/${{ env.TOOLCHAIN_NAME }}.tar.gz" -t "${{ env.TOOLCHAIN_NAME }}" -p "${{ matrix.target_triple }}-" -l cxx -l fortran
+        run: ./test/test-toolchain.sh -a "${{github.workspace}}/out/${{ env.TOOLCHAIN_ARCHIVE }}" -t "${{ env.TOOLCHAIN_NAME }}" -p "${{ matrix.target_triple }}-" -l cxx -l fortran
 
   release:
     name: Create Release
