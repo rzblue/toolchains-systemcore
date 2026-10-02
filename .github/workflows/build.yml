@@ -43,7 +43,7 @@ jobs:
           cd toolchains-systemcore
         if: ${{ runner.os == 'macOS' }}
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -52,7 +52,7 @@ jobs:
 
       - name: cache tarballs
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: src.tar
           key: src.tar-${{matrix.host_triple}}-${{ hashFiles('.github/actions/setup-crosstool-ng/*') }}-${{ hashFiles(matrix.defconfig) }}
@@ -95,7 +95,7 @@ jobs:
           echo "archiving:"
           tar -cvf src.tar src
       - name: Save sources
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: src.tar
           key: src.tar-${{matrix.host_triple}}-${{ hashFiles('.github/actions/setup-crosstool-ng/*') }}-${{ hashFiles(matrix.defconfig) }}
