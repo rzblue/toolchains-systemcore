@@ -1,21 +1,21 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Ryan Blue <ryanzblue@gmail.com>
-Date: Tue, 7 Apr 2026 01:03:20 -0400
-Subject: [PATCH] Add __FRC_SYSTEMCORE__ to platform config
+Date: Fri, 2 Oct 2026 02:32:20 -0400
+Subject: [PATCH] Set __FIRST_SYSTEMCORE__ in platform config
 
 ---
  gcc/config/linux.h | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/gcc/config/linux.h b/gcc/config/linux.h
-index a7248ac90d0c46062c24f324aeb26f6983dfead3..6cce3ad5c83a542e15653cfc49c44c01ae84639a 100644
+index a7248ac90d0c46062c24f324aeb26f6983dfead3..a8d6462c850af7ae2fe527ff3b870652056604db 100644
 --- a/gcc/config/linux.h
 +++ b/gcc/config/linux.h
 @@ -51,6 +51,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
      do {							\
  	if (OPTION_GLIBC)					\
  	  builtin_define ("__gnu_linux__");			\
-+	builtin_define ("__FRC_SYSTEMCORE__=2026");		\
++	builtin_define ("__FIRST_SYSTEMCORE__=1");		\
  	builtin_define_std ("linux");				\
  	builtin_define_std ("unix");				\
  	builtin_assert ("system=linux");			\
